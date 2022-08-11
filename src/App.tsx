@@ -6,6 +6,20 @@ import bgJpg from "./assets/images/bg.jpg";
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+/** アニメーションスクリプト */
+type AnimationScript = {
+  /** アニメーションが有効なスクロール開始位置[%] */
+  start: number;
+
+  /** アニメーションが有効なスクロール終了位置[%] */
+  end: number;
+
+  /** アニメーションの実装 */
+  animation: () => void;
+};
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
 // シーン
 const scene = new THREE.Scene();
 
@@ -44,10 +58,30 @@ torus.position.set(0, 1, 10);
 
 scene.add(box, torus);
 
+// スクロールアニメーション
+const animationScripts: AnimationScript[] = [];
+
+animationScripts.push({
+  start: 0,
+  end: 40,
+  animation: () => {
+    camera.lookAt(box.position);
+    camera.position.set(0, 1, 10);
+
+    box.position.z += 0.01;
+  },
+});
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 const App = () => {
   const refDiv = useRef<HTMLDivElement>(null);
+
+  const playAnimationScript = () => {
+    animationScripts.forEach((script) => {
+      script.animation();
+    });
+  };
 
   const handleOnBrowserResize = () => {
     // カメラのアスペクト比を修正
@@ -67,6 +101,9 @@ const App = () => {
     window.addEventListener("resize", handleOnBrowserResize);
 
     const updateRender = () => {
+      // アニメーションを再生
+      playAnimationScript();
+
       // レンダー
       renderer.render(scene, camera);
 
