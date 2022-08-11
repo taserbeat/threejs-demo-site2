@@ -53,8 +53,14 @@ const boxInitPosition = {
   z: -15,
 };
 
+const boxInitRotation = {
+  x: 1,
+  y: 1,
+  z: 0,
+};
+
 box.position.set(boxInitPosition.x, boxInitPosition.y, boxInitPosition.z);
-box.rotation.set(1, 1, 0);
+box.rotation.set(boxInitRotation.x, boxInitRotation.y, boxInitRotation.z);
 
 const torusGeometry = new THREE.TorusGeometry(8, 2, 16, 100);
 const torusMaterial = new THREE.MeshNormalMaterial();
@@ -85,6 +91,40 @@ animationScripts.push({
   },
 });
 
+animationScripts.push({
+  start: 40,
+  end: 60,
+  animation: () => {
+    camera.lookAt(box.position);
+    camera.position.set(0, 1, 10);
+
+    box.rotation.z = lerp(boxInitRotation.x, Math.PI, getScrollScale(40, 60));
+  },
+});
+
+animationScripts.push({
+  start: 60,
+  end: 80,
+  animation: () => {
+    camera.lookAt(box.position);
+
+    camera.position.x = lerp(0, -15, getScrollScale(60, 80));
+    camera.position.y = lerp(1, 15, getScrollScale(60, 80));
+    camera.position.z = lerp(10, 25, getScrollScale(60, 80));
+  },
+});
+
+animationScripts.push({
+  start: 80,
+  end: 100,
+  animation: () => {
+    camera.lookAt(box.position);
+
+    box.rotation.x += 0.02;
+    box.rotation.y += 0.02;
+  },
+});
+
 // スクロール率
 let scrollRate = 0;
 
@@ -106,7 +146,7 @@ const App = () => {
 
   const playAnimationScript = () => {
     animationScripts.forEach((script) => {
-      if (scrollRate >= script.start && scrollRate < script.end) {
+      if (scrollRate >= script.start && scrollRate <= script.end) {
         script.animation();
       }
     });
