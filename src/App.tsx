@@ -2,11 +2,18 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
 import "./App.css";
+import bgJpg from "./assets/images/bg.jpg";
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 // シーン
 const scene = new THREE.Scene();
+
+// 背景用のテクスチャ
+const textureLoader = new THREE.TextureLoader();
+const backgroundTexture = textureLoader.load(bgJpg);
+
+scene.background = backgroundTexture;
 
 // カメラ
 const camera = new THREE.PerspectiveCamera(
