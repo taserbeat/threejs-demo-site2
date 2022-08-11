@@ -72,6 +72,9 @@ animationScripts.push({
   },
 });
 
+// スクロール率
+let scrollRate = 0;
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 const App = () => {
@@ -79,7 +82,9 @@ const App = () => {
 
   const playAnimationScript = () => {
     animationScripts.forEach((script) => {
-      script.animation();
+      if (scrollRate >= script.start && scrollRate < script.end) {
+        script.animation();
+      }
     });
   };
 
@@ -95,10 +100,26 @@ const App = () => {
     return;
   };
 
+  /** スクロール率を計算する */
+  const handleOnScroll = () => {
+    const documentElement = document.documentElement;
+
+    // documentElementについて
+    // scrollTop: 画面全体の上端から現在位置までのピクセル数
+    // scrollHeight: 画面全体の上端から下端までのピクセル数 (clientHeightも含む)
+    // clientHeight: 表示中の画面の縦幅
+
+    scrollRate =
+      (documentElement.scrollTop /
+        (documentElement.scrollHeight - documentElement.clientHeight)) *
+      100;
+  };
+
   useEffect(() => {
     refDiv.current?.appendChild(renderer.domElement);
 
     window.addEventListener("resize", handleOnBrowserResize);
+    window.addEventListener("scroll", handleOnScroll);
 
     const updateRender = () => {
       // アニメーションを再生
