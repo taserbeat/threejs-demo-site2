@@ -47,12 +47,24 @@ const boxGeometry = new THREE.BoxGeometry(5, 5, 5, 10);
 const boxMaterial = new THREE.MeshNormalMaterial();
 const box = new THREE.Mesh(boxGeometry, boxMaterial);
 
-box.position.set(0, 0.5, -15);
+const boxInitPosition = {
+  x: 0,
+  y: 0.5,
+  z: -15,
+};
+
+box.position.set(boxInitPosition.x, boxInitPosition.y, boxInitPosition.z);
 box.rotation.set(1, 1, 0);
 
 const torusGeometry = new THREE.TorusGeometry(8, 2, 16, 100);
 const torusMaterial = new THREE.MeshNormalMaterial();
 const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+
+const torusInitPosition = {
+  x: 0,
+  y: 1,
+  z: 10,
+};
 
 torus.position.set(0, 1, 10);
 
@@ -68,12 +80,24 @@ animationScripts.push({
     camera.lookAt(box.position);
     camera.position.set(0, 1, 10);
 
-    box.position.z += 0.01;
+    box.position.z = lerp(boxInitPosition.z, 2, getScrollScale(0, 40));
+    torus.position.z = lerp(torusInitPosition.z, -20, getScrollScale(0, 40));
   },
 });
 
 // スクロール率
 let scrollRate = 0;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+// 線形補完で滑らかに移動させる
+const lerp = (x: number, y: number, a: number) => {
+  return (1 - a) * x + a * y;
+};
+
+const getScrollScale = (start: number, end: number) => {
+  return (scrollRate - start) / (end - start);
+};
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
